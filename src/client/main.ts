@@ -5,13 +5,16 @@ import SeminarList from './views/SeminarList.vue';
 import BookingForm from './views/BookingForm.vue';
 import MyPage from './views/MyPage.vue';
 
+import AdminLogin from './views/admin/AdminLogin.vue';
+import AdminDashboard from './views/admin/AdminDashboard.vue';
+
 // Routes
 const routes = [
     { path: '/', name: 'Home', component: SeminarList },
     { path: '/book/:id', name: 'Booking', component: BookingForm },
     { path: '/mypage', name: 'MyPage', component: MyPage },
-    { path: '/admin/login', name: 'AdminLogin', component: () => import('./views/admin/AdminLogin.vue') },
-    { path: '/admin/dashboard', name: 'AdminDashboard', component: () => import('./views/admin/AdminDashboard.vue'), meta: { requiresAuth: true } }
+    { path: '/admin/login', name: 'AdminLogin', component: AdminLogin },
+    { path: '/admin/dashboard', name: 'AdminDashboard', component: AdminDashboard, meta: { requiresAuth: true } }
 ];
 
 // Router (Hash mode for GAS compatibility)
