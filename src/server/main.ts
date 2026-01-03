@@ -103,3 +103,46 @@ global.doPost = doPost;
 global.getSeminars = getSeminars;
 global.bookSeminar = bookSeminar;
 global.getMyPageData = getMyPageData;
+
+// --- Admin API ---
+
+import { AdminService } from './services/AdminService';
+
+function adminLogin(password: string): ApiResponse<boolean> {
+    const adminService = new AdminService();
+    if (adminService.verifyPassword(password)) {
+        return { success: true, data: true };
+    } else {
+        return { success: false, error: 'パスワードが違います' };
+    }
+}
+
+function saveSeminar(seminar: Seminar, password: string): ApiResponse<Seminar> {
+    const adminService = new AdminService();
+    if (!adminService.verifyPassword(password)) return { success: false, error: 'Unauthorized' };
+
+    try {
+        const sheetService = new SheetService();
+        const saved = sheetService.saveSeminar(seminar);
+        return { success: true, data: saved };
+    } catch (e: any) {
+        return { success: false, error: e.toString() };
+    }
+}
+
+function deleteSeminar(id: string, password: string): ApiResponse<void> {
+    const adminService = new AdminService();
+    if (!adminService.verifyPassword(password)) return { success: false, error: 'Unauthorized' };
+
+    try {
+        const sheetService = new SheetService();
+        sheetService.deleteSeminar(id);
+        return { success: true };
+    } catch (e: any) {
+        return { success: false, error: e.toString() };
+    }
+}
+
+global.adminLogin = adminLogin;
+global.saveSeminar = saveSeminar;
+global.deleteSeminar = deleteSeminar;

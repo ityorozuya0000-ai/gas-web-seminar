@@ -22,6 +22,17 @@ export const gasBackend = {
                         });
                     } else if (functionName === 'bookSeminar') {
                         resolve({ success: true, paymentLink: 'https://square.link/mock', bookingId: 'mock-booking-id' });
+                    } else if (functionName === 'adminLogin') {
+                        // Mock password check
+                        if (args[0] === 'password') {
+                            resolve({ success: true, data: true });
+                        } else {
+                            resolve({ success: false, error: 'パスワードが違います' });
+                        }
+                    } else if (functionName === 'saveSeminar') {
+                        resolve({ success: true, data: args[0] });
+                    } else if (functionName === 'deleteSeminar') {
+                        resolve({ success: true });
                     } else {
                         resolve({ success: true });
                     }

@@ -5,6 +5,8 @@ export interface Seminar {
     endAt: string;   // ISO string
     capacity: number;
     remaining: number;
+    booked_count?: number;
+    zoom_url?: string;
     price: number;
     description?: string;
 }

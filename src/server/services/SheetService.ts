@@ -6,8 +6,24 @@ export class SheetService {
     private bookingSheet: GoogleAppsScript.Spreadsheet.Sheet;
 
     constructor() {
-        // Uses the active spreadsheet
-        this.ss = SpreadsheetApp.getActiveSpreadsheet();
+        const scriptProperties = PropertiesService.getScriptProperties();
+        const spreadsheetId = scriptProperties.getProperty('SPREADSHEET_ID');
+
+        if (spreadsheetId) {
+            this.ss = SpreadsheetApp.openById(spreadsheetId);
+        } else {
+            // Fallback for container-bound scripts, though this app is likely standalone
+            try {
+                this.ss = SpreadsheetApp.getActiveSpreadsheet();
+            } catch (e) {
+                throw new Error('Spreadsheet ID not found. Please set SPREADSHEET_ID in Script Properties.');
+            }
+        }
+
+        if (!this.ss) {
+            throw new Error('Spreadsheet not found. Please check SPREADSHEET_ID.');
+        }
+
         this.seminarSheet = this.getOrCreateSheet('Seminars');
         this.bookingSheet = this.getOrCreateSheet('Bookings');
     }
@@ -133,5 +149,61 @@ export class SheetService {
             status: booking.status,
             zoomUrl: booking.status === 'PAID' ? 'SEMINAR_ZOOM_URL_PLACEHOLDER' : undefined // Ideally fetch from seminar sheet if not secret, or secret handling
         };
+    }
+    saveSeminar(seminar: Seminar): Seminar {
+        const data = this.seminarSheet.getDataRange().getValues();
+        let rowIndex = -1;
+
+        // Check if updating existing
+        if (seminar.id) {
+            for (let i = 1; i < data.length; i++) {
+                if (String(data[i][0]) === seminar.id) {
+                    rowIndex = i + 1;
+                    break;
+                }
+            }
+        }
+
+        if (rowIndex === -1) {
+            // New Seminar
+            seminar.id = Utilities.getUuid();
+            rowIndex = this.seminarSheet.getLastRow() + 1;
+        }
+
+        // 'id', 'title', 'startAt', 'endAt', 'capacity', 'booked_count', 'zoom_url', 'price', 'description'
+        const rowData = [
+            seminar.id,
+            seminar.title,
+            seminar.startAt,
+            seminar.endAt,
+            seminar.capacity,
+            seminar.booked_count || 0,
+            seminar.zoom_url || '',
+            seminar.price,
+            seminar.description || ''
+        ];
+
+        // Write row
+        // If rowIndex > lastRow, usage of getRange might differ but setValues handles expansion usually if contiguous.
+        // Actually for new row better to use appendRow if we are sure it is new? 
+        // But getRange().setValues() allows specific row update.
+        if (rowIndex > this.seminarSheet.getLastRow()) {
+            this.seminarSheet.appendRow(rowData);
+        } else {
+            this.seminarSheet.getRange(rowIndex, 1, 1, rowData.length).setValues([rowData]);
+        }
+
+        return seminar;
+    }
+
+    deleteSeminar(id: string): void {
+        const data = this.seminarSheet.getDataRange().getValues();
+        for (let i = 1; i < data.length; i++) {
+            if (String(data[i][0]) === id) {
+                this.seminarSheet.deleteRow(i + 1);
+                return;
+            }
+        }
+        throw new Error('セミナーが見つかりません');
     }
 }
