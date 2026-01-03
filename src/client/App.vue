@@ -17,6 +17,11 @@
     </main>
 
     <LoadingSpinner :loading="isLoading" :message="loadingMessage" />
+
+    <footer>
+      <p>&copy; 2024 Web Seminar System</p>
+      <p class="admin-link"><router-link to="/admin/login">管理者ログイン</router-link></p>
+    </footer>
   </div>
 </template>
 
