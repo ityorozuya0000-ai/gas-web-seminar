@@ -1,23 +1,23 @@
 <template>
   <div class="booking-form">
-    <h2>Book Seminar: {{ seminarTitle }}</h2>
+    <h2>セミナーを予約: {{ seminarTitle }}</h2>
     <form @submit.prevent="submitBooking">
       <div class="form-group">
-        <label>Name</label>
-        <input v-model="form.name" required placeholder="Yamada Taro" />
+        <label>お名前</label>
+        <input v-model="form.name" required placeholder="山田 太郎" />
       </div>
       <div class="form-group">
-        <label>Email</label>
+        <label>メールアドレス</label>
         <input v-model="form.email" type="email" required placeholder="taro@example.com" />
       </div>
       <div class="form-group">
-        <label>Date of Birth</label>
+        <label>生年月日</label>
         <input v-model="form.dob" type="date" required />
       </div>
       
       <div class="actions">
-        <button type="button" @click="$router.back()" class="btn-secondary">Back</button>
-        <button type="submit" class="btn-primary">Proceed to Payment</button>
+        <button type="button" @click="$router.back()" class="btn-secondary">戻る</button>
+        <button type="submit" class="btn-primary">お支払いへ進む</button>
       </div>
     </form>
   </div>
@@ -34,7 +34,7 @@ const router = useRouter();
 const setLoading = inject('setLoading') as (loading: boolean, message?: string) => void;
 
 const seminarId = route.params.id as string;
-const seminarTitle = route.query.title as string || 'Unknown Seminar';
+const seminarTitle = route.query.title as string || 'セミナー';
 
 const form = ref({
   name: '',
@@ -43,9 +43,9 @@ const form = ref({
 });
 
 const submitBooking = async () => {
-  if (!confirm('Proceed to booking?')) return;
+  if (!confirm('予約を進めますか？')) return;
   
-  setLoading(true, 'Processing booking...');
+  setLoading(true, '予約処理中...');
   try {
     const request: BookingRequest = {
       seminarId: seminarId,
@@ -62,11 +62,11 @@ const submitBooking = async () => {
         // OR show a success page with the link
         // router.push({ name: 'Success', query: { link: response.paymentLink } });
       } else {
-        alert('Booking successful! Please check your email.');
+        alert('予約を受け付けました。メールをご確認ください。');
         router.push('/');
       }
     } else {
-        alert('Booking Failed: ' + response.message);
+        alert('予約に失敗しました: ' + response.message);
     }
   } catch (e) {
     alert('Error: ' + e);

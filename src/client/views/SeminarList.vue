@@ -1,19 +1,19 @@
 <template>
   <div class="seminar-list">
-    <h2>Available Seminars</h2>
+    <h2>開催予定のセミナー</h2>
     <div v-if="seminars.length === 0" class="no-data">
-      No seminars available at the moment.
+      現在、予約可能なセミナーはありません。
     </div>
     <div v-else class="seminar-cards">
       <div v-for="seminar in seminars" :key="seminar.id" class="card">
         <h3>{{ seminar.title }}</h3>
-        <p class="date">Date: {{ formatDate(seminar.startAt) }}</p>
-        <p class="price">Price: ¥{{ seminar.price.toLocaleString() }}</p>
-        <p class="capacity">Remaining: {{ seminar.remaining }} / {{ seminar.capacity }}</p>
+        <p class="date">開催日: {{ formatDate(seminar.startAt) }}</p>
+        <p class="price">参加費: ¥{{ seminar.price.toLocaleString() }}</p>
+        <p class="capacity">残り枠: {{ seminar.remaining }} / {{ seminar.capacity }}</p>
         <p class="desc">{{ seminar.description }}</p>
         
         <button @click="goToBooking(seminar)" :disabled="seminar.remaining <= 0" class="btn-book">
-          {{ seminar.remaining > 0 ? 'Book Now' : 'Full' }}
+          {{ seminar.remaining > 0 ? '予約する' : '満席' }}
         </button>
       </div>
     </div>
@@ -31,13 +31,13 @@ const router = useRouter();
 const setLoading = inject('setLoading') as (loading: boolean, message?: string) => void;
 
 const fetchSeminars = async () => {
-  setLoading(true, 'Fetching seminars...');
+  setLoading(true, 'セミナー情報を取得中...');
   try {
     const response = await gasBackend.run('getSeminars');
     if (response.success && response.data) {
       seminars.value = response.data;
     } else {
-      alert('Failed to fetch seminars: ' + response.error);
+      alert('セミナー情報の取得に失敗しました: ' + response.error);
     }
   } catch (e) {
     alert('Error: ' + e);

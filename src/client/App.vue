@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <header>
-      <h1>Web Seminar System</h1>
+      <h1>Webセミナー予約システム</h1>
       <nav>
-        <router-link to="/">Seminars</router-link> |
+        <router-link to="/">セミナー一覧</router-link> |
         <!-- Check My Page is usually via token link, but maybe good to have a generic login/check link if implemented -->
       </nav>
     </header>
@@ -25,9 +25,9 @@ import { ref, provide } from 'vue';
 import LoadingSpinner from './components/ui/LoadingSpinner.vue';
 
 const isLoading = ref(false);
-const loadingMessage = ref('Loading...');
+const loadingMessage = ref('読み込み中...');
 
-const setLoading = (loading: boolean, message: string = 'Loading...') => {
+const setLoading = (loading: boolean, message: string = '読み込み中...') => {
   isLoading.value = loading;
   loadingMessage.value = message;
 };

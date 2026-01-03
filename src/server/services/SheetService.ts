@@ -113,7 +113,7 @@ export class SheetService {
         const bData = this.bookingSheet.getDataRange().getValues();
         const bRow = bData.find(r => r[6] === token);
 
-        if (!bRow) throw new Error('Invalid Token');
+        if (!bRow) throw new Error('無効なトークンです');
 
         // booking row map
         const booking = {
@@ -124,7 +124,7 @@ export class SheetService {
         };
 
         const seminar = this.getSeminarById(booking.seminarId as string);
-        if (!seminar) throw new Error('Seminar data missing');
+        if (!seminar) throw new Error('セミナーデータが見つかりません');
 
         return {
             bookingId: booking.id as string,

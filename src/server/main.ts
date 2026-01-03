@@ -61,8 +61,8 @@ function bookSeminar(request: BookingRequest): BookingResponse {
 
             // Check availability
             const seminar = sheetService.getSeminarById(request.seminarId);
-            if (!seminar) throw new Error('Seminar not found');
-            if (seminar.remaining <= 0) throw new Error('Full capacity');
+            if (!seminar) throw new Error('セミナーが見つかりません');
+            if (seminar.remaining <= 0) throw new Error('満席です');
 
             // Create Booking (PENDING)
             const booking = sheetService.createBooking(request.seminarId, request.user);
@@ -83,7 +83,7 @@ function bookSeminar(request: BookingRequest): BookingResponse {
             lock.releaseLock();
         }
     } else {
-        return { success: false, message: 'Server is busy. Please try again.' };
+        return { success: false, message: 'サーバーが混み合っています。もう一度お試しください。' };
     }
 }
 
